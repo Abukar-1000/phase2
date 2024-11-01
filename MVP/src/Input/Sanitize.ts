@@ -167,7 +167,7 @@ export function TryBuildRepoURL(raw: string): RepoURL | undefined {
         }
         return undefined;
     } catch {
-        throw new Error('The RepoURL failed to be built');
+        throw new Error('The RepoURL failed to be built ');
     }
 }
 
