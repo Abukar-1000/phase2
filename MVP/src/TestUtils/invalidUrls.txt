@@ -1,0 +1,6 @@
+x
+query
+some
+github.com/a
+npmjs.org/eq
+npmjs.org/@eq/e

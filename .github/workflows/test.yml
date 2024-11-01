@@ -1,0 +1,34 @@
+name: Run Tests
+
+on:
+    pull_request:
+        branches: [ dev, master, CI_CD_test ]
+
+jobs:
+    test:
+        runs-on: ubuntu-latest
+
+        steps:
+            - name: Checkout repository
+              uses: actions/checkout@v2
+
+            - name: Set up Node.js
+              uses: actions/setup-node@v3
+              with:
+                  node-version: "18"
+
+            - name: Install dependencies
+              run: npm install
+              working-directory: MVP
+            - name: Create coverage directory
+              run: mkdir -p MVP/coverage
+            - name: Run Jest tests
+              run: npm test
+              working-directory: MVP/src/Tests
+            
+            - uses: actions/upload-artifact@v3
+              if: always()
+              with:
+                  name: CI-CD-results
+                  path: MVP/src/TestUtils/
+                  retention-days: 30

@@ -1,0 +1,40 @@
+{
+    "name": "mvp",
+    "version": "1.0.0",
+    "main": "src/index.ts",
+    "contributors": [
+        {
+            "name": "John Leidy",
+            "email": "leidyiidev@gmail.com",
+            "url": "https://johnleidyii.netlify.app/"
+        }
+    ],
+    "prettier": "john-leidy-prettier-config",
+    "scripts": {
+        "build": "npx tsc",
+        "dev": "nodemon src/index.ts",
+        "test": "npm install && npm run build && npm run test:jest:mute",
+        "posttest": "node dist/TestUtils/posttest.js",
+        "test:jest:verbose": "jest --verbose --config jest.config.verbose.js",
+        "test:jest:mute": "jest --config jest.config.minimal.js >coverage/dump.txt"
+    },
+    "devDependencies": {
+        "@babel/preset-env": "^7.25.4",
+        "@babel/preset-typescript": "^7.24.7",
+        "@jest/globals": "^29.7.0",
+        "@types/node": "^22.5.0",
+        "john-leidy-prettier-config": "^1.0.1",
+        "nodemon": "^3.1.4",
+        "ts-jest": "^29.2.5",
+        "ts-node": "^10.9.2",
+        "typescript": "^5.5.4"
+    },
+    "dependencies": {
+        "chalk": "^4.1.2",
+        "dotenv": "^16.4.5",
+        "isomorphic-git": "^1.27.1",
+        "jest": "^29.7.0",
+        "openai": "^4.58.2",
+        "yargs": "^17.7.2"
+    }
+}

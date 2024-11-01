@@ -1,0 +1,7 @@
+https://www.npmjs.com/package/queue-lit
+https://www.npmjs.com/package/comment-json
+https://github.com/BellDorian/SoftwareEng_Fall2024
+https://www.npmjs.com/package/@ant-design/colors
+https://www.typescriptlang.org/docs/handbook/functions.html
+https://www.npmjs.com/package/query-string
+https://www.npmjs.com/package/@atom-ide-community/atom-package-manager
