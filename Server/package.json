@@ -1,0 +1,27 @@
+{
+  "name": "trustworthy-module-registry-backend",
+  "version": "1.0.0",
+  "description": "Secure module validation system",
+  "main": "index.ts",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "ts-node ../Server/index.ts"
+  },
+  "author": "Group 2",
+  "license": "ISC",
+  "dependencies": {
+    "bcryptjs": "^2.4.3",
+    "express": "^4.21.1",
+    "express-rate-limit": "^7.4.1",
+    "jsonwebtoken": "^9.0.2",
+    "multer": "^1.4.5-lts.1",
+    "unzipper": "^0.12.3"
+  },
+  "devDependencies": {
+    "@types/bcryptjs": "^2.4.6",
+    "@types/express": "^5.0.0",
+    "@types/jsonwebtoken": "^9.0.7",
+    "@types/multer": "^1.4.12",
+    "@types/unzipper": "^0.10.10"
+  }
+}
