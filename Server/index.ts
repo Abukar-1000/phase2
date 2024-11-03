@@ -40,7 +40,7 @@ app.post(
         
         res.status(200).send(JSON.stringify(npmPkgScore));
 
-        // res.status(200).send('File uploaded and extracted successfully');
+        res.status(200).send('File uploaded and extracted successfully');
 
         // // Optional: Unzip the file to a specific folder
         // const outputDir = path.join(__dirname, 'extracted');
