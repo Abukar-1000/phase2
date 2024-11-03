@@ -27,9 +27,9 @@ app.post(
     try {
 
         console.log("req: \n", req.params, " \nbody:\n", req.body);
-        // if (!req.file) {
-        //     return res.status(400).send('No file uploaded.');
-        // }
+        if (!req.params.packageName) {
+            res.status(400).send('No file uploaded.');
+        }
 
         // const zipFilePath = req.file.path;
 
