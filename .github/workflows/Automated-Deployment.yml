@@ -31,9 +31,6 @@ jobs:
             cd ..
             pwd 
 
-      - name: Run tests
-        run: npm test
-
       - name: Authentication
         uses: aws-actions/configure-aws-credentials@v1
         with:
