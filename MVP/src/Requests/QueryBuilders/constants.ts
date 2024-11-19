@@ -8,6 +8,7 @@ import {
     createReactionsField,
     createVulnerabilityAlertsField,
     createIssuesField,
+    createPackageJsonField,
 } from './fields';
 
 export const defaultFields = [
@@ -51,4 +52,5 @@ export const extraFields = [
     createVulnerabilityAlertsField(10),
     createReactionsField(10),
     createIssuesField(0),
+    createPackageJsonField()
 ];

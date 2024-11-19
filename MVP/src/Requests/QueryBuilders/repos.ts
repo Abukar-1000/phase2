@@ -7,6 +7,7 @@
 import { QueryParams, Repository } from '../../Types/DataTypes';
 import { defaultFields } from './constants';
 
+
 /**
  * @author John Leidy
  * @description Builds a GraphQL query string based on the provided repository query information and optional extra fields.

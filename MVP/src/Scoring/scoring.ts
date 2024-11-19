@@ -12,6 +12,7 @@ import { scoreCorrectness } from './scoreCorrectness';
 import { finalScore } from './finalScore';
 import { LogInfo } from '../Utils/log';
 import chalk from 'chalk';
+import { scoreDependencyPinning } from './scoreDependencyPinning';
 
 function getLatencyInMs(startTime: [number, number]): number {
     const diff = process.hrtime(startTime); // [seconds, nanoseconds]
@@ -50,6 +51,11 @@ export async function scoreRepository<T>(repo: Repository<T>): Promise<Repositor
     const license = licenseFunction(repo);
     const licenseLatency = getLatencyInMs(licenseStart);
 
+    // Dependency Pinning Score
+    const depPinningStart = process.hrtime();
+    const depPinning = scoreDependencyPinning(repo);
+    const depPinningLatency = getLatencyInMs(depPinningStart);
+
     let netScore = finalScore(license, [rampup, correctness, busFactor, responsive], [0.25, 0.25, 0.4, 0.1]);
     const netScoreLatency = getLatencyInMs(netScoreStart);
 
@@ -69,6 +75,8 @@ export async function scoreRepository<T>(repo: Repository<T>): Promise<Repositor
             ResponsiveMaintainer_Latency: responsiveLatency,
             License: license,
             License_Latency: licenseLatency,
+            DependencyPinning: depPinning,
+            DependencyPinning_Latency: depPinningLatency
         },
     };
 }

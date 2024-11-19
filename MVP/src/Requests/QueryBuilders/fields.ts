@@ -102,3 +102,11 @@ export const createTestMasterQuery = () => `
       }
     }
 `;
+
+export const createPackageJsonField = () => `
+  packageJson: object(expression: "HEAD:package.json") {
+    ... on Blob {
+      text
+    }
+  }
+`;
