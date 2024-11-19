@@ -72,4 +72,13 @@ export interface BaseRepoQueryResponse {
     packageJson?:{
         text: string;
     };
+
+    pullRequests?: {
+        nodes: Array<{
+            additions: number;
+            reviews: {
+                totalCount: number;
+            };
+        }>;
+    };
 }

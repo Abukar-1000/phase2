@@ -18,6 +18,8 @@ export type NDJSONRow = Partial<{
     License_Latency: number;
     DependencyPinning: number;
     DependencyPinning_Latency: number;
+    CodeReview: number;
+    CodeReview_Latency: number;
 }>;
 
 export type NDJSONRows = NDJSONRow[];
@@ -57,6 +59,15 @@ export type Repository<T> = {
 
               packageJson?: {
                 text: string;
+              };
+
+              pullRequests?: {
+                  nodes: Array<{
+                      additions: number;
+                      reviews: {
+                          totalCount: number;
+                      };
+                  }>;
               };
 
               licenseInfo?: { name?: string };

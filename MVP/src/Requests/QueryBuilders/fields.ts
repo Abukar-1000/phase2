@@ -110,3 +110,15 @@ export const createPackageJsonField = () => `
     }
   }
 `;
+
+
+export const createPullRequestsField = () => `
+  pullRequests(first: 100, states: MERGED) {
+    nodes {
+      additions
+      reviews(first: 1) {
+        totalCount
+      }
+    }
+  }
+`;
