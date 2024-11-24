@@ -11,9 +11,16 @@
  *  handle a task. We only change its definition here.
  */
 
+import secrets from "./secrets";
+
 const config: AWSConfig = {
     UploadZippedLambda: "zippedUploads",
     LambdaFunctionDefaultRegion: "us-east-1"
+}
+
+export const LambdaDefaultConfig = {
+    region: config.LambdaFunctionDefaultRegion,
+    credentials: secrets
 }
 
 interface AWSConfig {
