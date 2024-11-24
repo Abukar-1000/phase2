@@ -17,7 +17,7 @@ import SearchPackagesRequest from './types/Request/SearchPackagesRequest';
 import CheckSizeCostRequest from './types/Request/CheckSizeCostRequest';
 
 const app = express();
-const PORT = 443;
+const PORT = 8000;
 
 // Configuration for handling zipped files
 const storage = multer.diskStorage({
