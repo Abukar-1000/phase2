@@ -16,19 +16,26 @@ import FetchPackageDirectoryRequest from './types/Request/FetchPackageDirectoryR
 import SearchPackagesRequest from './types/Request/SearchPackagesRequest';
 import CheckSizeCostRequest from './types/Request/CheckSizeCostRequest';
 
+import { LambdaClient, InvokeCommand } from "@aws-sdk/client-lambda";
+import config from './aws/config';
+import LamdaRequest from './types/aws/LamdaRequest';
+import ZippedUpload, { Base64Payload } from './types/aws/LamdaPayload/ZippedUpload';
+import secrets from './aws/secrets';
+
 const app = express();
 const PORT = 443;
 
 // Configuration for handling zipped files
-const storage = multer.diskStorage({
-    destination: (req, file, cb) => {
-        cb(null, 'uploads/'); // folder to store uploaded files temporarly untill Google cloud storage is configured
-    },
-    filename: (req, file, cb) => {
-        cb(null, `${file.originalname}`); // rename file
-    }
-});
+// const storage = multer.diskStorage({
+//     destination: (req, file, cb) => {
+//         cb(null, 'uploads/'); // folder to store uploaded files temporarly untill Google cloud storage is configured
+//     },
+//     filename: (req, file, cb) => {
+//         cb(null, `${file.originalname}`); // rename file
+//     }
+// });
   
+const storage = multer.memoryStorage();
 // Multer middleware to handle single file upload with 'zipFile' as the field name
 // This is place holder untill GCP or S3 is used for keeping track of the data
 const upload = multer({
@@ -48,21 +55,49 @@ const upload = multer({
 // Middleware to parse JSON
 app.use(express.json());
 
+const LambdaDefaultConfig = {
+    region: config.LambdaFunctionDefaultRegion,
+    credentials: secrets
+}
+
 app.post(
-    '/package/:debloat', 
+    '/package/:debloat/:packageName/:version', 
     upload.single('package'),
     async (req: UploadPackageRequest, res: Response) => {
         console.log(req.params, req.body);
-        const filename = req.file?.filename;
+        if (!req.file?.buffer) {
+            res.status(500).send("Did not provide file!");
+        }
+        
+        const base64ZippedFile: Base64Payload = req.file?.buffer.toString("base64");
+        const payload: ZippedUpload = {
+            packageName: req.params.packageName,
+            version: req.params.version,
+            package: base64ZippedFile
+        }
 
-        // zipped file in uploads folder 
-        // needs debloat to be implemented
-        const endPointResponse = {
-            params: req.params,
-            body: req.body,
-            filename: filename
+        const client = new LambdaClient(LambdaDefaultConfig);
+        const params: LamdaRequest = {
+            FunctionName: config.UploadZippedLambda,
+            InvocationType: "RequestResponse",
+            Payload: JSON.stringify(payload),
         };
-        res.status(200).send(endPointResponse);
+    
+        let response: any = { status: 200 };
+        try {
+            const command = new InvokeCommand(params);
+            let result = await client.send(command);
+            response.result = JSON.parse(Buffer.from(result.Payload?.buffer as Buffer).toString("utf8"));
+        } catch (error) {
+            response.result = error;
+            response.status = 500;
+            console.error("Error invoking Lambda:", error);
+        }
+        finally {
+            res.status(response.status ?? 500).send({
+                ...response
+            });
+        }
 });
 
 app.post(
@@ -99,15 +134,6 @@ app.post(
         const npmPkgScore = await scoreMethod.scoreRepositoriesArray(repo);
         
         res.status(200).send(JSON.stringify(npmPkgScore));
-
-        // res.status(200).send('File uploaded and extracted successfully');
-        // // Optional: Unzip the file to a specific folder
-        // const outputDir = path.join(__dirname, 'extracted');
-        // fs.createReadStream(zipFilePath)
-        //     .pipe(unzipper.Extract({ path: outputDir }))
-        //     .on('close', () => {
-        //         res.status(200).send('File uploaded and extracted successfully');
-        //     });
     } catch (error) {
         res.status(500).send('Error uploading or processing file');
     }
