@@ -2,7 +2,10 @@ import { Request, Response } from 'express';
 import * as core from "express-serve-static-core";
 
 export default interface UploadPackageRequest<
-    P = core.ParamsDictionary, 
+    P = {
+        packageName: string,
+        version: string
+    }, 
     ResBody = any,
     ReqBody = {
         package: Blob // This is the zipped file that will sent by the client. TS defined it as a blob 

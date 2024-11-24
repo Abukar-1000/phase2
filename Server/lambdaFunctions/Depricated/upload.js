@@ -1,5 +1,4 @@
 import multer from 'multer';
-
 // Configuration for handling zipped files
 const storage = multer.diskStorage({
     destination: (req, file, cb) => {
@@ -23,12 +22,3 @@ const upload = multer({
         }
     }
 });
-
-async function handler(event) {
-    
-    const response = {
-        statusCode: 200,
-        body: JSON.stringify('Hello from zipped lambda!'),
-    };
-    return response;
-}

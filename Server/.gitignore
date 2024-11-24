@@ -1,2 +1,4 @@
 node_modules/
 uploads/
+lambdaFunctions/node_modules
+lambdaFunctions/node_modules/Depricated
