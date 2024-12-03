@@ -4,6 +4,7 @@
  * @author DSinc
  */
 
+
 import './Utils/envConfig';
 import chalk from 'chalk';
 import { buildReposFromUrls } from './Processors/urlProcessor';
@@ -23,6 +24,7 @@ import {
     createReadmeField,
     createTestMasterQuery,
     createTestMainQuery,
+    createPackageJsonField,
 } from './Requests/QueryBuilders/fields';
 import * as dot from 'dotenv';
 
@@ -44,6 +46,7 @@ const runner = async () => {
         createTestMainQuery(),
         createTestMasterQuery(),
         'stargazerCount',
+        createPackageJsonField(),
     ]); //add an array of fields here... see Request/QueryBuilders/fields.ts for examples
     const result = await requestFromGQL<ReposFromQuery<BaseRepoQueryResponse>>(query); //result is the raw gql response... .data has your data, .errors has the errors
     const cleanedRepos = mapGQLResultToRepos(result, repos);

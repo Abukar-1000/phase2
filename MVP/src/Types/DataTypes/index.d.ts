@@ -16,6 +16,10 @@ export type NDJSONRow = Partial<{
     ResponsiveMaintainer_Latency: number;
     License: number;
     License_Latency: number;
+    DependencyPinning: number;
+    DependencyPinning_Latency: number;
+    CodeReview: number;
+    CodeReview_Latency: number;
 }>;
 
 export type NDJSONRows = NDJSONRow[];
@@ -52,6 +56,19 @@ export type Repository<T> = {
                   totalCount: number;
               };
               stargazerCount?: number;
+
+              packageJson?: {
+                text: string;
+              };
+
+              pullRequests?: {
+                  nodes: Array<{
+                      additions: number;
+                      reviews: {
+                          totalCount: number;
+                      };
+                  }>;
+              };
 
               licenseInfo?: { name?: string };
               ref?: { target?: { history: { edges?: [{ node: { author: { name: string } } }] } } };

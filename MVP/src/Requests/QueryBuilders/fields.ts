@@ -103,3 +103,23 @@ export const createTestMasterQuery = () => `
       }
     }
 `;
+
+export const createPackageJsonField = () => `
+  packageJson: object(expression: "HEAD:package.json") {
+    ... on Blob {
+      text
+    }
+  }
+`;
+
+
+export const createPullRequestsField = () => `
+  pullRequests(first: 100, states: MERGED) {
+    nodes {
+      additions
+      reviews(first: 1) {
+        totalCount
+      }
+    }
+  }
+`;

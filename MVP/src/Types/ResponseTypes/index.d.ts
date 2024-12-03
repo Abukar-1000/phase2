@@ -69,4 +69,16 @@ export interface BaseRepoQueryResponse {
     readmeFile?: { text: string };
     testsCheckMain?: { entries: TestsFilesFromQuery };
     testsCheckMaster?: { entries: TestsFilesFromQuery };
+    packageJson?:{
+        text: string;
+    };
+
+    pullRequests?: {
+        nodes: Array<{
+            additions: number;
+            reviews: {
+                totalCount: number;
+            };
+        }>;
+    };
 }
