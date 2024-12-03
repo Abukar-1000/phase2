@@ -33,9 +33,13 @@ router.post(
             res.status(400).send('No file uploaded.');
         }
 
-        // const zipFilePath = req.file.path;
+        /**
+         * - Remove zip file from req body
+         * 
+         * Optimize by caching version if already computed.
+         */
 
-        const npmURL = `https://www.npmjs.com/package/${req.params.packageName}`
+        const npmURL = `https://www.npmjs.com/package/${req.params.packageName}/v/${req.params.version}`
         const cleanSet = sanitize.SanitizeUrlSet([ npmURL ])
         const repo = await processURLMethod.buildReposFromUrls(cleanSet)
 
@@ -47,6 +51,8 @@ router.post(
             'stargazerCount',
         ]);
         const result = await requestFromGQL<ReposFromQuery<BaseRepoQueryResponse>>(query);
+
+        // Problem method that takes too long
         const cleanedRepos = processMethod.mapGQLResultToRepos(result, repo);
         
         const npmPkgScore = await scoreMethod.scoreRepositoriesArray(repo);
