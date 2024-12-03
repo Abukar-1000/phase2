@@ -8,7 +8,14 @@ export function scoreDependencyPinning<T>(repo: Repository<T>): number {
     return 1.0;
   }
 
-  const packageJson = JSON.parse(packageJsonText);
+  let packageJson;
+  try {
+    packageJson = JSON.parse(packageJsonText);  // Try parsing the JSON
+  } catch (error) {
+    // If JSON parsing fails, return 1.0 as per the test requirement
+    return 1.0;
+  }
+
   const dependencies = packageJson.dependencies || {};
   const devDependencies = packageJson.devDependencies || {};
 
@@ -35,3 +42,4 @@ function isPinnedToMajorMinor(version: string): boolean {
   const regex = /^(\d+)\.(\d+)\./;
   return regex.test(version);
 }
+
