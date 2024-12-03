@@ -16,7 +16,7 @@ import { defaultFields } from './constants';
  * @returns The constructed GraphQL query string. {@type string}
  */
 export const repoQueryBuilder = <T>(repos: Repository<T>[], version: string, extraFields?: string[]): string => {
-    // prev query
+    // prev query modified
     // return `
     //     query {
     //         ${repos
