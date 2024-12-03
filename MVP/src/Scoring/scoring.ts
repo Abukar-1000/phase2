@@ -50,7 +50,7 @@ export async function scoreRepository<T>(repo: Repository<T>): Promise<Repositor
     const license = licenseFunction(repo);
     const licenseLatency = getLatencyInMs(licenseStart);
 
-    let netScore = finalScore(license, [rampup, correctness, busFactor, responsive], [0.25, 0.25, 0.4, 0.1]);
+    let netScore = finalScore(license, [rampup, correctness, busFactor, responsive], [0.25, 0.25, 0.15, 0.35]);
     const netScoreLatency = getLatencyInMs(netScoreStart);
 
     return {
@@ -74,6 +74,7 @@ export async function scoreRepository<T>(repo: Repository<T>): Promise<Repositor
 }
 
 /**
+ * [comment] There are ratios inside the scoring files to adjust values
  * @author Jorge Puga Hernandez
  *
  * @description - Scores an array of repositories by using the map function to
