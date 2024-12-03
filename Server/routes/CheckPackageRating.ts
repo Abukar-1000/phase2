@@ -9,9 +9,16 @@ import zipFileHandler from "../src/ZipFileHandler"
 import { LambdaDefaultConfig } from '../aws/config';
 import CheckPackageRatingRequest from '../types/Request/CheckPackageRatingRequest';
 import * as scoreMethod from "../../MVP/src/Scoring/scoring"
-import * as processMethod from "../../MVP/src/Processors/urlProcessor"
+import { requestFromGQL } from "../../MVP/src/Requests/GitHub/gql"
+import * as processMethod from "../../MVP/src/Processors/gqlProcessor"
+import * as processURLMethod from "../../MVP/src/Processors/urlProcessor"
 import * as sanitize from "../../MVP/src/Input/Sanitize"
+import { createLicenseField, createReadmeField, createTestMainQuery, createTestMasterQuery } from '../../MVP/src/Requests/QueryBuilders/fields';
+import { repoQueryBuilder } from '../../MVP/src/Requests/QueryBuilders/repos';
+import { BaseRepoQueryResponse, ReposFromQuery } from '../../MVP/src/Types/ResponseTypes';
+import * as dotenv from "dotenv";
 
+dotenv.config();
 const router = Router();
 
 router.post(
@@ -30,11 +37,23 @@ router.post(
 
         const npmURL = `https://www.npmjs.com/package/${req.params.packageName}`
         const cleanSet = sanitize.SanitizeUrlSet([ npmURL ])
-        const repo = await processMethod.buildReposFromUrls(cleanSet)
+        const repo = await processURLMethod.buildReposFromUrls(cleanSet)
+
+        const query = repoQueryBuilder(repo, [
+            createLicenseField(),
+            createReadmeField(),
+            createTestMainQuery(),
+            createTestMasterQuery(),
+            'stargazerCount',
+        ]);
+        const result = await requestFromGQL<ReposFromQuery<BaseRepoQueryResponse>>(query);
+        const cleanedRepos = processMethod.mapGQLResultToRepos(result, repo);
+        
         const npmPkgScore = await scoreMethod.scoreRepositoriesArray(repo);
         
-        res.status(200).send(JSON.stringify(npmPkgScore));
+        res.status(200).send(npmPkgScore);
     } catch (error) {
+        console.error(error);
         res.status(500).send('Error uploading or processing file');
     }
 });
