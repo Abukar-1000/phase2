@@ -94,6 +94,7 @@ export async function scoreRepository<T>(repo: Repository<T>): Promise<Repositor
 }
 
 /**
+ * [comment] There are ratios inside the scoring files to adjust values
  * @author Jorge Puga Hernandez
  *
  * @description - Scores an array of repositories by using the map function to

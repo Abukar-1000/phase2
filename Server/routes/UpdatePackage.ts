@@ -1,0 +1,26 @@
+import express, { Request, response, Response, Router } from 'express';
+import { LambdaClient, InvokeCommand } from "@aws-sdk/client-lambda";
+import config from '../aws/config';
+import LamdaRequest from '../types/aws/LamdaRequest';
+import ZippedUpload, { Base64Payload } from '../types/aws/LamdaPayload/ZippedUpload';
+import UpdatePackageRequest from '../types/Request/UpdatePackageRequest';
+import UploadPackageRequest from '../types/Request/UploadPackageRequest';
+import zipFileHandler from "../src/ZipFileHandler"
+import { LambdaDefaultConfig } from '../aws/config';
+
+const router = Router();
+router.post(
+    '/:packageName/:version',
+    zipFileHandler.single('package'),
+    async (req: UpdatePackageRequest, res: Response) => {
+        
+        const filename = req.file?.filename || "Didnt get a zipped file";
+        const endPointResponse = {
+            params: req.params,
+            body: req.body,
+            filename: filename
+        };
+        res.status(200).send(endPointResponse);
+});
+
+export default router;

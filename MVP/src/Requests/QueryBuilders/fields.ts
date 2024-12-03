@@ -73,6 +73,7 @@ ref(qualifiedName: "main") {
     }
 }`;
 
+// change this readme query so its not case sensitive 
 export const createReadmeField = () => `
 readmeFile: object(expression: "HEAD:README.md") {
             ... on Blob {
