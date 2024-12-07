@@ -15,6 +15,8 @@ import secrets from "./secrets";
 
 const config: AWSConfig = {
     UploadZippedLambda: "zippedUploads",
+    DownloadPackageLambda: "downloadPackage",
+    UpdatePackageLambda: "updatePackage",
     LambdaFunctionDefaultRegion: "us-east-1"
 }
 
@@ -25,6 +27,8 @@ export const LambdaDefaultConfig = {
 
 interface AWSConfig {
     UploadZippedLambda: string,
+    DownloadPackageLambda: string,
+    UpdatePackageLambda: string,
     LambdaFunctionDefaultRegion: string,
 }
 
