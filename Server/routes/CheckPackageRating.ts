@@ -8,14 +8,14 @@ import UploadPackageRequest from '../types/Request/UploadPackageRequest';
 import zipFileHandler from "../src/ZipFileHandler"
 import { LambdaDefaultConfig } from '../aws/config';
 import CheckPackageRatingRequest from '../types/Request/CheckPackageRatingRequest';
-import * as scoreMethod from "../../MVP/src/Scoring/scoring"
-import { requestFromGQL } from "../../MVP/src/Requests/GitHub/gql"
-import * as processMethod from "../../MVP/src/Processors/gqlProcessor"
-import * as processURLMethod from "../../MVP/src/Processors/urlProcessor"
-import * as sanitize from "../../MVP/src/Input/Sanitize"
-import { createLicenseField, createReadmeField, createTestMainQuery, createTestMasterQuery } from '../../MVP/src/Requests/QueryBuilders/fields';
-import { repoQueryBuilder } from '../../MVP/src/Requests/QueryBuilders/repos';
-import { BaseRepoQueryResponse, ReposFromQuery } from '../../MVP/src/Types/ResponseTypes';
+import * as scoreMethod from "../../MVP2/src/Scoring/scoring"
+import { requestFromGQL } from "../../MVP2/src/Requests/GitHub/gql"
+import * as processMethod from "../../MVP2/src/Processors/gqlProcessor"
+import * as processURLMethod from "../../MVP2/src/Processors/urlProcessor"
+import * as sanitize from "../../MVP2/src/Input/Sanitize"
+import { createLicenseField, createReadmeField, createTestMainQuery, createTestMasterQuery } from '../../MVP2/src/Requests/QueryBuilders/fields';
+import { repoQueryBuilder } from '../../MVP2/src/Requests/QueryBuilders/repos';
+import { BaseRepoQueryResponse, ReposFromQuery } from '../../MVP2/src/Types/ResponseTypes';
 import * as dotenv from "dotenv";
 
 dotenv.config();
@@ -39,7 +39,7 @@ router.post(
          * Optimize by caching version if already computed.
          */
 
-        const npmURL = `https://www.npmjs.com/package/${req.params.packageName}/v/${req.params.version}`
+        const npmURL = `https://www.npmjs.com/package/${req.params.packageName}`
         const cleanSet = sanitize.SanitizeUrlSet([ npmURL ])
         const repo = await processURLMethod.buildReposFromUrls(cleanSet)
 
