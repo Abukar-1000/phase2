@@ -8,9 +8,9 @@ import UploadPackageRequest from '../types/Request/UploadPackageRequest';
 import zipFileHandler from "../src/ZipFileHandler"
 import { LambdaDefaultConfig } from '../aws/config';
 import CheckPackageRatingRequest from '../types/Request/CheckPackageRatingRequest';
-import * as scoreMethod from "../../MVP/src/Scoring/scoring"
-import * as processMethod from "../../MVP/src/Processors/urlProcessor"
-import * as sanitize from "../../MVP/src/Input/Sanitize"
+import * as scoreMethod from "../../MVP2/src/Scoring/scoring"
+import * as processMethod from "../../MVP2/src/Processors/urlProcessor"
+import * as sanitize from "../../MVP2/src/Input/Sanitize"
 import DownloadPackageRequest from '../types/Request/DownloadPackageRequest';
 
 const router = Router();

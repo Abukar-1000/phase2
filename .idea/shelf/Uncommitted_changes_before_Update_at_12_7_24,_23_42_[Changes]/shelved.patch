@@ -1,0 +1,67 @@
+Index: MVP/src/Requests/QueryBuilders/repos.ts
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.BaseRevisionTextPatchEP
+<+>/**\n * Please see the individual function documentation for information.\n * This module builds a dynamic query for GQL\n * @author DSinc\n */\n\nimport { QueryParams, Repository } from '../../Types/DataTypes';\nimport { defaultFields } from './constants';\n\n\n/**\n * @author John Leidy\n * @description Builds a GraphQL query string based on the provided repository query information and optional extra fields.\n * @param repoQueryInformation An array of objects containing the owner and repository name for each query. {@type Repository<T>[]}\n * @param extraFields An optional array of additional fields to include in the query. {@type string[]}\n * @returns The constructed GraphQL query string. {@type string}\n */\nexport const repoQueryBuilder = <T>(repos: Repository<T>[], version: string, extraFields?: string[]): string => {\n    // prev query modified\n    // return `\n    //     query {\n    //         ${repos\n    //             .map((repo, idx) => {\n    //                 return `\n    //             repo${idx}: repository(owner: \"${repo.owner}\", name: \"${repo.repoName}\") {\n    //                             ${[...defaultFields, ...(extraFields ?? [])].join('\\n')}\n                                  \n    //                         }\n    //                     `;\n    //             })\n    //             .join('\\n')}\n    //     }\n    // `;\n\n    return `\n        query {\n            ${repos\n                .map((repo, idx) => {\n                    return `\n                repo${idx}: repository(owner: \"${repo.owner}\", name: \"${repo.repoName}\") {\n                    version(version: \"${version}\") {\n                        ${[...defaultFields, ...(extraFields ?? [])].join('\\n')}\n                    }\n                }\n            `;\n                })\n                .join('\\n')}\n        }\n    `;\n};\n\n/**\n * @author John Leidy\n * @description Builds a query that shows the fields available for repositories\n * @returns a string to use for a query! {@type string}\n */\nexport const buildRepoSchemaQuery = (): string => {\n    return `\n       query {\n        __type(name: \"Repository\") {\n                name\n                kind\n                description\n                fields {\n                    name\n                }\n            }\n        }\n\n    `;\n};\n
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/MVP/src/Requests/QueryBuilders/repos.ts b/MVP/src/Requests/QueryBuilders/repos.ts
+--- a/MVP/src/Requests/QueryBuilders/repos.ts	(revision 026b0e18e12941e75c6775d83ea35d723bc939f6)
++++ b/MVP/src/Requests/QueryBuilders/repos.ts	(date 1733631368843)
+@@ -17,36 +17,36 @@
+  */
+ export const repoQueryBuilder = <T>(repos: Repository<T>[], version: string, extraFields?: string[]): string => {
+     // prev query modified
++    return `
++        query {
++            ${repos
++                .map((repo, idx) => {
++                    return `
++                repo${idx}: repository(owner: "${repo.owner}", name: "${repo.repoName}") {
++                                ${[...defaultFields, ...(extraFields ?? [])].join('\n')}
++                                  
++                            }
++                        `;
++                })
++                .join('\n')}
++        }
++    `;
++
+     // return `
+     //     query {
+     //         ${repos
+     //             .map((repo, idx) => {
+     //                 return `
+     //             repo${idx}: repository(owner: "${repo.owner}", name: "${repo.repoName}") {
+-    //                             ${[...defaultFields, ...(extraFields ?? [])].join('\n')}
+-                                  
+-    //                         }
+-    //                     `;
++    //                 version(version: "${version}") {
++    //                     ${[...defaultFields, ...(extraFields ?? [])].join('\n')}
++    //                 }
++    //             }
++    //         `;
+     //             })
+     //             .join('\n')}
+     //     }
+     // `;
+-
+-    return `
+-        query {
+-            ${repos
+-                .map((repo, idx) => {
+-                    return `
+-                repo${idx}: repository(owner: "${repo.owner}", name: "${repo.repoName}") {
+-                    version(version: "${version}") {
+-                        ${[...defaultFields, ...(extraFields ?? [])].join('\n')}
+-                    }
+-                }
+-            `;
+-                })
+-                .join('\n')}
+-        }
+-    `;
+ };
+ 
+ /**

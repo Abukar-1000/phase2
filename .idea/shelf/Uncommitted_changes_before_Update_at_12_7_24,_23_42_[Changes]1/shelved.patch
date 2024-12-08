@@ -1,0 +1,15 @@
+Index: Server/.env
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.BaseRevisionTextPatchEP
+<+>GITHUB_TOKEN=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
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/Server/.env b/Server/.env
+--- a/Server/.env	(revision 026b0e18e12941e75c6775d83ea35d723bc939f6)
++++ b/Server/.env	(date 1733631125993)
+@@ -1,1 +1,1 @@
+-GITHUB_TOKEN=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
+\ No newline at end of file
++GITHUB_TOKEN=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
+\ No newline at end of file
