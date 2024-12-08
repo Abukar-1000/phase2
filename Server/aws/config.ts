@@ -13,10 +13,16 @@
 
 import secrets from "./secrets";
 
+// @ts-ignore
 const config: AWSConfig = {
     UploadZippedLambda: "zippedUploads",
     DownloadPackageLambda: "downloadPackage",
     UpdatePackageLambda: "updatePackage",
+    FetchAvailableVersionLambda: "FetchAvailableVersion",
+    FetchPackageDirectory:"FetchPackageDirectory",
+    SearchPackageRequest:"SearchPackageRequest",
+    ResetRequest:"ResetRequest",
+    CheckSizeCostRequest:"CheckSizeCostRequest",
     LambdaFunctionDefaultRegion: "us-east-1"
 }
 
@@ -29,6 +35,11 @@ interface AWSConfig {
     UploadZippedLambda: string,
     DownloadPackageLambda: string,
     UpdatePackageLambda: string,
+    FetchAvailableVersionLambda: string,
+    FetchPackageDirectory: string,
+    SearchPackageRequest: string,
+    ResetRequest: string,
+    CheckSizeCostRequest: string,
     LambdaFunctionDefaultRegion: string,
 }
 

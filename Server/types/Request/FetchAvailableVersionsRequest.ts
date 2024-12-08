@@ -4,8 +4,7 @@ import * as core from "express-serve-static-core";
 export default interface FetchAvailableVersionsRequest<
     P = {
         packageName: string,
-        version: string | undefined,
-        versionRange: string | undefined
+        version: string | undefined
     }, 
     ResBody = any,
     ReqBody = any,
