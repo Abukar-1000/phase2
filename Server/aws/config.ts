@@ -13,8 +13,14 @@
 
 import secrets from "./secrets";
 
+// @ts-ignore
 const config: AWSConfig = {
     UploadZippedLambda: "zippedUploads",
+    FetchAvailableVersionLambda: "FetchAvailableVersion",
+    FetchPackageDirectory:"FetchPackageDirectory",
+    SearchPackageRequest:"SearchPackageRequest",
+    ResetRequest:"ResetRequest",
+    CheckSizeCostRequest:"CheckSizeCostRequest",
     LambdaFunctionDefaultRegion: "us-east-1"
 }
 
@@ -25,6 +31,11 @@ export const LambdaDefaultConfig = {
 
 interface AWSConfig {
     UploadZippedLambda: string,
+    FetchAvailableVersionLambda: string,
+    FetchPackageDirectory: string,
+    SearchPackageRequest: string,
+    ResetRequest: string,
+    CheckSizeCostRequest: string,
     LambdaFunctionDefaultRegion: string,
 }
 
