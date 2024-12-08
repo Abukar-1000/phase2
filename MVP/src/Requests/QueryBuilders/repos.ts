@@ -15,34 +15,17 @@ import { defaultFields } from './constants';
  * @param extraFields An optional array of additional fields to include in the query. {@type string[]}
  * @returns The constructed GraphQL query string. {@type string}
  */
-export const repoQueryBuilder = <T>(repos: Repository<T>[], version: string, extraFields?: string[]): string => {
-    // prev query modified
-    // return `
-    //     query {
-    //         ${repos
-    //             .map((repo, idx) => {
-    //                 return `
-    //             repo${idx}: repository(owner: "${repo.owner}", name: "${repo.repoName}") {
-    //                             ${[...defaultFields, ...(extraFields ?? [])].join('\n')}
-                                  
-    //                         }
-    //                     `;
-    //             })
-    //             .join('\n')}
-    //     }
-    // `;
-
+export const repoQueryBuilder = <T>(repos: Repository<T>[], extraFields?: string[]): string => {
     return `
         query {
             ${repos
                 .map((repo, idx) => {
                     return `
                 repo${idx}: repository(owner: "${repo.owner}", name: "${repo.repoName}") {
-                    version(version: "${version}") {
-                        ${[...defaultFields, ...(extraFields ?? [])].join('\n')}
-                    }
-                }
-            `;
+                                ${[...defaultFields, ...(extraFields ?? [])].join('\n')}
+                                  
+                            }
+                        `;
                 })
                 .join('\n')}
         }

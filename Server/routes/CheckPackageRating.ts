@@ -39,30 +39,19 @@ router.post(
          * Optimize by caching version if already computed.
          */
 
-        const npmURL = `https://www.npmjs.com/package/${req.params.packageName}`
+        const npmURL = `https://www.npmjs.com/package/${req.params.packageName}/v/${req.params.version}`
         const cleanSet = sanitize.SanitizeUrlSet([ npmURL ])
-        const repo = await processURLMethod.buildReposFromUrls(cleanSet, req.params.version)
+        const repo = await processURLMethod.buildReposFromUrls(cleanSet)
 
-        // modified to add version to query
-        const query = repoQueryBuilder(repo, 
-            req.params.version,
-            [
+        const query = repoQueryBuilder(repo, [
             createLicenseField(),
             createReadmeField(),
             createTestMainQuery(),
             createTestMasterQuery(),
             'stargazerCount',
         ]);
-
-        // const query = repoQueryBuilder(repo, 
-        //     [
-        //     createLicenseField(),
-        //     createReadmeField(),
-        //     createTestMainQuery(),
-        //     createTestMasterQuery(),
-        //     'stargazerCount',
-        // ]);
         const result = await requestFromGQL<ReposFromQuery<BaseRepoQueryResponse>>(query);
+
         // Problem method that takes too long
         const cleanedRepos = processMethod.mapGQLResultToRepos(result, repo);
         
