@@ -57,6 +57,7 @@ export const processNpmUrl = async <T>(npmUrlDataElement: PackageURL): Promise<R
             if (params) {
                 return {
                     owner: params.owner,
+                    version: npmUrlDataElement.version,
                     repoName: params.repoName,
                     fileUrl: npmUrlDataElement.raw,
                     queryResult: null,

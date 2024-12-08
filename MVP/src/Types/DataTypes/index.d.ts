@@ -37,6 +37,7 @@ export type TestsFilesFromQuery = {
 
 export type Repository<T> = {
     owner: string;
+    version: string;
     repoName: string;
     description?: string;
     repoUrl?: string;

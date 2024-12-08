@@ -6,6 +6,7 @@
 export interface TokenizedURL {
     raw: string;
     tokens: string[];
+    version: string;
     protocol: string | undefined;
 }
 
