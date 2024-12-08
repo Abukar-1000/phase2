@@ -233,6 +233,7 @@ function BuildCleanURL_npm(rawURL: string, webProtocol: string, addressTokens: s
             tokens: addressTokens,
             protocol: webProtocol,
             packageName: title,
+            version: ""
         };
         return packageUrl;
     } catch {
@@ -260,6 +261,7 @@ function BuildCleanURL_github(rawURL: string, webProtocol: string, addressTokens
     try {
         const repoUrl: RepoURL = {
             raw: rawURL,
+            version: "",
             tokens: addressTokens,
             protocol: webProtocol,
             repoOwner: addressTokens[1],

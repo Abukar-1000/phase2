@@ -4,3 +4,4 @@ lambdaFunctions/node_modules
 lambdaFunctions/node_modules/Depricated
 aws/.env
 aws/secrets.ts
+.env

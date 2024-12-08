@@ -16,18 +16,44 @@ import DownloadPackageRequest from '../types/Request/DownloadPackageRequest';
 const router = Router();
 
 /**
- * was originally: /packages/{packageName}/{version} in plan
- * changed to:
- *  /packages/download/{packageName}/{version}
+ * 
  */
 router.get(
     '/:packageName/:version',
     async (req: DownloadPackageRequest, res: Response) => {
-        const endPointResponse = {
-            params: req.params,
-            body: req.body
+        
+        const payload = {
+            packageName: req.params?.packageName,
+            version: req.params?.version
         };
-        res.status(200).send(endPointResponse);
+
+        const client = new LambdaClient(LambdaDefaultConfig);
+        const params: LamdaRequest = {
+            FunctionName: config.DownloadPackageLambda,
+            InvocationType: "RequestResponse",
+            Payload: JSON.stringify(payload),
+        };
+    
+        let response: any = {};
+        try {
+            const command = new InvokeCommand(params);
+            let result = await client.send(command);
+            response = {
+                status: 200,
+                result: JSON.parse( Buffer.from(result.Payload?.buffer as Buffer ).toString("utf8"))
+            }
+        } catch (error) {
+            response = {
+                status: 500,
+                result: error
+            }
+            console.error("Error invoking Lambda:", error);
+        }
+        finally {
+            const { status } = response;
+            res.status(status).send(response);
+        }
+
     }
 );
 
