@@ -5,8 +5,8 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="8bab1a6f-a214-478f-b7ba-c18b6882284c" name="Changes" comment="">
-      <change beforePath="$PROJECT_DIR$/MVP2/src/Scoring/finalScore.ts" beforeDir="false" afterPath="$PROJECT_DIR$/MVP2/src/Scoring/finalScore.ts" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Server/routes/DownloadPackage.ts" beforeDir="false" afterPath="$PROJECT_DIR$/Server/routes/DownloadPackage.ts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/MVP2/src/Scoring/scoreBusFactor.ts" beforeDir="false" afterPath="$PROJECT_DIR$/MVP2/src/Scoring/scoreBusFactor.ts" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -73,7 +73,7 @@
       <option name="presentableId" value="Default" />
       <updated>1733625584570</updated>
       <workItem from="1733625585629" duration="3781000" />
-      <workItem from="1733633085084" duration="695000" />
+      <workItem from="1733633085084" duration="1628000" />
     </task>
     <servers />
   </component>

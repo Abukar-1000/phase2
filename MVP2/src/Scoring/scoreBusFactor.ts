@@ -1,7 +1,7 @@
 /**
  * @author Ben Kanter
  * Accepts a repository
- * Clones the repo using isometric git
+ * Clones the repo using isometric git (shallow clone)
  * Finds unique contributors
  * Measures the amount of contributions each contributor has
  * Decides which contributors should be part of the bus factor score
@@ -9,7 +9,7 @@
  *
  * @param repo - Repository to be scored
  *
- * @return - Bus factor derrived using the Sigmoid function's distribution
+ * @return - Bus factor derived using the Sigmoid function's distribution
  */
 
 import { Repository, NDJSONRow } from '../Types/DataTypes';
@@ -29,29 +29,32 @@ export type Contributor = {
 type CC = { [key: string]: number };
 
 const countCommits = (log: any): { [key: string]: number } | undefined => {
+    if (!log) return undefined;
+
     const res: CC = {};
-    if (log) {
-        log.forEach((logItem: any) => {
-            if (logItem.commit && logItem.commit.author && logItem.commit.author.name) {
-                if (Object.keys(res).includes(logItem.commit.author.name)) {
-                    res[logItem.commit.author.name] += 1;
-                } else {
-                    res[logItem.commit.author.name] = 1;
-                }
+    for (const logItem of log) {
+        const authorName = logItem.commit?.author?.name;
+        if (authorName) {
+            if (res[authorName]) {
+                res[authorName] += 1;
+            } else {
+                res[authorName] = 1;
             }
-        });
+        }
     }
+
     return Object.keys(res).length > 0 ? res : undefined;
 };
 
 const filterLow = (contributors: CC | undefined) => {
-    let store: CC = {};
-    if (contributors) {
-        Object.entries(contributors).forEach((contributor) => {
-            if (contributor[1] > 5) {
-                store[contributor[0]] = contributor[1];
-            }
-        });
+    if (!contributors) return undefined;
+
+    const store: CC = {};
+    for (const [name, count] of Object.entries(contributors)) {
+        // Increase the threshold if needed or keep as is
+        if (count > 5) {
+            store[name] = count;
+        }
     }
     return Object.keys(store).length > 0 ? store : undefined;
 };
@@ -59,56 +62,51 @@ const filterLow = (contributors: CC | undefined) => {
 function removeRepo(directory: string) {
     if (fileSystem.existsSync(directory)) {
         fileSystem.rmSync(directory, { recursive: true, force: true });
-        LogDebug(`Repository at ${directory} has been removed.`);
-    } else {
-        LogDebug(`Directory ${directory} does not exist.`);
     }
 }
 
 const handleRepoClone = async <T>(repoDirectory: string, repo: Repository<T>) => {
     try {
+        // Use shallow clone with limited depth for speed
         await git.clone({
             fs: fileSystem,
             http,
             singleBranch: true,
+            depth: 50, // shallow clone to reduce data transfer and processing
             dir: repoDirectory,
             url: repo.queryResult?.url,
         });
     } catch (err) {
         if (err instanceof Error) {
-            LogDebug(err.message);
+            LogDebug(`Clone error: ${err.message}`);
         } else {
-            LogDebug('unknown error curred in handleRepoClone');
+            LogDebug('Unknown error occurred in handleRepoClone');
         }
         removeRepo(repoDirectory);
+        throw err; // re-throw to handle outside
     }
 };
 
 const getGitLog = async (repoDirectory: string, depth: number) => {
     try {
-        const gitLog = await git.log({
+        return await git.log({
             fs: fileSystem,
             dir: repoDirectory,
             depth: depth,
         });
-        return gitLog;
     } catch (err) {
         if (err instanceof Error) {
-            LogDebug(err.message);
-            return undefined;
+            LogDebug(`Git log error: ${err.message}`);
         } else {
-            LogDebug('Unknown error curred getting git log.');
-            return undefined;
+            LogDebug('Unknown error occurred getting git log.');
         }
+        return undefined;
     }
 };
 
 const calculateScore = (filteredContributors: CC | undefined, maxExpectedContributors: number) => {
-    if (filteredContributors) {
-        return Math.min(1, Object.keys(filteredContributors).length / maxExpectedContributors);
-    } else {
-        return 0;
-    }
+    if (!filteredContributors) return 0;
+    return Math.min(1, Object.keys(filteredContributors).length / maxExpectedContributors);
 };
 
 const ensureRepoDumpExists = () => {
@@ -119,17 +117,22 @@ const ensureRepoDumpExists = () => {
 
 export async function scoreBusFactor<T>(repo: Repository<T>): Promise<number> {
     ensureRepoDumpExists();
-    let score = 0;
+
     const repoDirectory = `${DUMP_DIRECTORY}/${repo.repoName}`;
+    let score = 0;
+
     try {
         await handleRepoClone(repoDirectory, repo);
+        // Limit depth further to speed up operations if needed
         const gitLog = await getGitLog(repoDirectory, 100);
         const res = countCommits(gitLog);
         const fil = filterLow(res);
         score = calculateScore(fil, 10);
-        removeRepo(repoDirectory);
     } catch (err) {
-        LogDebug(err instanceof Error ? err.message : 'unkown error occured');
+        LogDebug(err instanceof Error ? `Error: ${err.message}` : 'Unknown error occurred');
+    } finally {
+        removeRepo(repoDirectory);
     }
+
     return score;
 }

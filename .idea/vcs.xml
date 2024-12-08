@@ -2,6 +2,6 @@
 <project version="4">
   <component name="VcsDirectoryMappings">
     <mapping directory="" vcs="Git" />
-    <mapping directory="$PROJECT_DIR$/Server/REPO_DUMP/react" vcs="Git" />
+    <mapping directory="$PROJECT_DIR$/Server/REPO_DUMP/node-mongodb-native" vcs="Git" />
   </component>
 </project>
