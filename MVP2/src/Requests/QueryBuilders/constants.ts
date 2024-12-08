@@ -15,7 +15,6 @@ import {
 export const defaultFields = [
     'description',
     'name',
-    'version',
     'url',
     `owner {
         login

@@ -42,8 +42,6 @@ export const requestFromGQL = async <T>(query: string): Promise<GraphQLResponse<
                 }`
             );
         }
-
-        console.log("GQL:", result, "Query:\n\n", query);
         return result;
     } catch (err) {
         LogDebug(

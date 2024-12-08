@@ -14,13 +14,12 @@ import { processNpmUrl } from './registryProcessor';
  * @param cleanUrls the query params and urls from files. {@type CleanUrlSet}
  * @returns repositories  {@type Repository<T>[]}
  */
-export const buildReposFromUrls = async <T>(cleanUrls: CleanURLSet, version: string): Promise<Repository<T>[]> => {
+export const buildReposFromUrls = async <T>(cleanUrls: CleanURLSet): Promise<Repository<T>[]> => {
     let repositories: Repository<T>[] = [];
     //Since the data is now split into separate types that do not have a consistent structure... process in two loops.
     for (const npmUrlDataElement of cleanUrls.npm_URLs) {
         const repo = await processNpmUrl<T>(npmUrlDataElement);
         if (repo) {
-            repo.version = version
             repositories.push(repo);
         }
     }
@@ -28,7 +27,6 @@ export const buildReposFromUrls = async <T>(cleanUrls: CleanURLSet, version: str
     for (const gitUrlDataElement of cleanUrls.github_URLs) {
         const repo = await processGitHubUrl<T>(gitUrlDataElement);
         if (repo) {
-            repo.version = version
             repositories.push(repo);
         }
     }

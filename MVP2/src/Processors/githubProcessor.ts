@@ -46,7 +46,6 @@ export const processGitHubUrl = <T>(githubUrlData: RepoURL): Repository<T> | und
     if (githubUrlData) {
         return {
             owner: githubUrlData.repoOwner,
-            version: githubUrlData.version,
             repoName: githubUrlData.repoName,
             fileUrl: githubUrlData.raw,
             queryResult: null,
