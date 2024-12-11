@@ -27,6 +27,7 @@ const config: AWSConfig = {
     CheckSizeCostRequest:"CheckSizeCostRequest",
     LambdaFunctionDefaultRegion: "us-east-1",
     IngestPackage:"IngestPackage",
+    RatePackage:"ratePackage",
 }
 
 export const LambdaDefaultConfig = {
@@ -45,6 +46,7 @@ interface AWSConfig {
     CheckSizeCostRequest: string,
     LambdaFunctionDefaultRegion: string,
     IngestPackage:string,
+    RatePackage: string,
 }
 
 interface AWSConfig {

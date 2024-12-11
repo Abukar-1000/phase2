@@ -2,17 +2,16 @@ import express, { Request, response, Response, Router } from 'express';
 import { LambdaClient, InvokeCommand } from "@aws-sdk/client-lambda";
 import config from '../aws/config';
 import LamdaRequest from '../types/aws/LamdaRequest';
-import ZippedUpload, { Base64Payload } from '../types/aws/LamdaPayload/ZippedUpload';
-import zipFileHandler from "../src/ZipFileHandler"
 import { LambdaDefaultConfig } from '../aws/config';
 import FetchAvailableVersionsRequest from '../types/Request/FetchAvailableVersionsRequest';
 
 
 const makeCall = async (req: any) => {
     const payload = {
-        packageName: req.Name,
+        packageName: req.Name.toLowerCase(),
         version: req.Version
     };
+    console.log(payload);
 
     const client = new LambdaClient(LambdaDefaultConfig);
     const params: LamdaRequest = {
@@ -27,13 +26,6 @@ const makeCall = async (req: any) => {
         return JSON.parse(
             Buffer.from(result.Payload?.buffer as Buffer
             ).toString("utf8"));
-
-        response = {
-            status: 200,
-            result: JSON.parse(
-                Buffer.from(result.Payload?.buffer as Buffer
-                ).toString("utf8"))
-        }
 
     } catch (error) {
         response = {
@@ -61,23 +53,24 @@ router.get(
         try {
             for (const pkg of req.body)
             {
-                let versions = await makeCall(pkg)
+                let versions = await makeCall(pkg);
+                console.log(versions,"acd");
+                if (versions && versions.length > 0) {
+                    const versionValue = versions.length === 1 ? versions[0] : versions.join(', ');
 
-                versions?.forEach((v: any) => {
                     response.push({
                         Name: pkg.Name,
-                        Version: v,
+                        Version: versionValue,
                         Id: pkg.Name
-                    })
-                })
+                    });
+                }
             }
 
             res.status(200).send(response);
         } 
-        catch (err)
+        catch (err: any)
         {
             res.status(400).send(err.message);
-            //
         }
     }
 )
