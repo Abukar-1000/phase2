@@ -2,36 +2,29 @@ import express, { Request, response, Response, Router } from 'express';
 import { LambdaClient, InvokeCommand } from "@aws-sdk/client-lambda";
 import config from '../aws/config';
 import LamdaRequest from '../types/aws/LamdaRequest';
-import ZippedUpload, { Base64Payload } from '../types/aws/LamdaPayload/ZippedUpload';
+import { Base64Payload } from '../types/aws/LamdaPayload/ZippedUpload';
 import UpdatePackageRequest from '../types/Request/UpdatePackageRequest';
-import UploadPackageRequest from '../types/Request/UploadPackageRequest';
 import zipFileHandler from "../src/ZipFileHandler"
 import { LambdaDefaultConfig } from '../aws/config';
-import CheckPackageRatingRequest from '../types/Request/CheckPackageRatingRequest';
-import * as scoreMethod from "../../MVP2/src/Scoring/scoring"
-import * as processMethod from "../../MVP2/src/Processors/urlProcessor"
-import * as sanitize from "../../MVP2/src/Input/Sanitize"
-import DownloadPackageRequest from '../types/Request/DownloadPackageRequest';
 
 const router = Router();
-
-/**
- * 
- */
-router.get(
+router.post(
     '/:packageName/:version',
-    async (req: DownloadPackageRequest, res: Response) => {
+    zipFileHandler.single('package'),
+    async (req: UpdatePackageRequest, res: Response) => {
         
-        const payload = {
-            packageName: req.params?.packageName,
-            version: req.params?.version
-        };
+        const filename = req.file?.filename || "Didnt get a zipped file";
 
+        const base64ZippedFile: Base64Payload = req.file?.buffer.toString("base64");
+        const payload = {
+            package: base64ZippedFile
+        }
+        
         const client = new LambdaClient(LambdaDefaultConfig);
         const params: LamdaRequest = {
-            FunctionName: config.DownloadPackageLambda,
+            FunctionName: config.UpdatePackageLambda,
             InvocationType: "RequestResponse",
-            Payload: JSON.stringify(payload),
+            Payload: JSON.stringify(payload)
         };
     
         let response: any = {};
@@ -53,8 +46,6 @@ router.get(
             const { status } = response;
             res.status(status).send(response);
         }
-
-    }
-);
+});
 
 export default router;

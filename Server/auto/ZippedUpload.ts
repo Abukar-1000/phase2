@@ -3,33 +3,31 @@ import { LambdaClient, InvokeCommand } from "@aws-sdk/client-lambda";
 import config from '../aws/config';
 import LamdaRequest from '../types/aws/LamdaRequest';
 import ZippedUpload, { Base64Payload } from '../types/aws/LamdaPayload/ZippedUpload';
-import UpdatePackageRequest from '../types/Request/UpdatePackageRequest';
 import UploadPackageRequest from '../types/Request/UploadPackageRequest';
 import zipFileHandler from "../src/ZipFileHandler"
 import { LambdaDefaultConfig } from '../aws/config';
-import CheckPackageRatingRequest from '../types/Request/CheckPackageRatingRequest';
-import * as scoreMethod from "../../MVP2/src/Scoring/scoring"
-import * as processMethod from "../../MVP2/src/Processors/urlProcessor"
-import * as sanitize from "../../MVP2/src/Input/Sanitize"
-import DownloadPackageRequest from '../types/Request/DownloadPackageRequest';
+
 
 const router = Router();
-
-/**
- * 
- */
-router.get(
-    '/:packageName/:version',
-    async (req: DownloadPackageRequest, res: Response) => {
+router.post(
+    '/:debloat/:packageName/:version', 
+    zipFileHandler.single('package'),
+    async (req: UploadPackageRequest, res: Response) => {
+        console.log(req.params, req.body);
+        if (!req.file?.buffer) {
+            res.status(500).send("Did not provide file!");
+        }
         
-        const payload = {
-            packageName: req.params?.packageName,
-            version: req.params?.version
-        };
+        const base64ZippedFile: Base64Payload = req.file?.buffer.toString("base64");
+        const payload: ZippedUpload = {
+            packageName: req.params.packageName,
+            version: req.params.version,
+            package: base64ZippedFile
+        }
 
         const client = new LambdaClient(LambdaDefaultConfig);
         const params: LamdaRequest = {
-            FunctionName: config.DownloadPackageLambda,
+            FunctionName: config.UploadZippedLambda,
             InvocationType: "RequestResponse",
             Payload: JSON.stringify(payload),
         };
@@ -40,7 +38,9 @@ router.get(
             let result = await client.send(command);
             response = {
                 status: 200,
-                result: JSON.parse( Buffer.from(result.Payload?.buffer as Buffer ).toString("utf8"))
+                result: JSON.parse(
+                    Buffer.from(result.Payload?.buffer as Buffer
+                ).toString("utf8"))
             }
         } catch (error) {
             response = {
@@ -53,8 +53,6 @@ router.get(
             const { status } = response;
             res.status(status).send(response);
         }
-
-    }
-);
+});
 
 export default router;

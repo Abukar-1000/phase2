@@ -17,6 +17,7 @@ const config: AWSConfig = {
     UploadZippedLambda: "zippedUploads",
     DownloadPackageLambda: "downloadPackage",
     UpdatePackageLambda: "updatePackage",
+    IngestPackageLambda: "IngestPackage",
     LambdaFunctionDefaultRegion: "us-east-1"
 }
 
@@ -29,6 +30,7 @@ interface AWSConfig {
     UploadZippedLambda: string,
     DownloadPackageLambda: string,
     UpdatePackageLambda: string,
+    IngestPackageLambda: string,
     LambdaFunctionDefaultRegion: string,
 }
 
