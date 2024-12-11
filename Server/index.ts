@@ -53,12 +53,12 @@ app.use(express.json());
 // app.use("/packages/size-cost", CheckSizeCost);
 // app.use("/reset", Reset);
 
-app.use("/packages", SearchPackages);
+app.use("/packages", FetchAvailableVersions);
+app.use("/packages/search", SearchPackages);
 app.use("/package", ZippedUpload);
 app.use("/packages", UpdatePackage);
 app.use("/packages/rating", CheckPackageRating);
 app.use("/packages/download", DownloadPackage);
-app.use("/packages/versions", FetchAvailableVersions);
 app.use("/ingest", IngestPackage);
 app.use("/packages/directory", FetchPackageDirectory);
 app.use("/packages/size-cost", CheckSizeCost);
