@@ -2,8 +2,6 @@ import express, { Request, response, Response, Router } from 'express';
 import { LambdaClient, InvokeCommand } from "@aws-sdk/client-lambda";
 import config from '../aws/config';
 import LamdaRequest from '../types/aws/LamdaRequest';
-import ZippedUpload, { Base64Payload } from '../types/aws/LamdaPayload/ZippedUpload';
-import zipFileHandler from "../src/ZipFileHandler"
 import { LambdaDefaultConfig } from '../aws/config';
 import FetchAvailableVersionsRequest from '../types/Request/FetchAvailableVersionsRequest';
 
@@ -13,6 +11,7 @@ const makeCall = async (req: any) => {
         packageName: req.Name.toLowerCase(),
         version: req.Version
     };
+    console.log(payload);
 
     const client = new LambdaClient(LambdaDefaultConfig);
     const params: LamdaRequest = {
@@ -24,14 +23,9 @@ const makeCall = async (req: any) => {
     try {
         const command = new InvokeCommand(params);
         let result = await client.send(command);
-        response = {
-            status: 200,
-            result: JSON.parse(
-                Buffer.from(result.Payload?.buffer as Buffer
-                ).toString("utf8"))
-        }
-
-        return response.result?.body;
+        return JSON.parse(
+            Buffer.from(result.Payload?.buffer as Buffer
+            ).toString("utf8"));
 
     } catch (error) {
         response = {

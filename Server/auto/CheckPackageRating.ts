@@ -1,66 +1,99 @@
-import express, { Request, response, Response, Router } from 'express';
+import express, { Request, Response, Router } from 'express';
 import { LambdaClient, InvokeCommand } from "@aws-sdk/client-lambda";
 import config from '../aws/config';
 import LamdaRequest from '../types/aws/LamdaRequest';
-import ZippedUpload, { Base64Payload } from '../types/aws/LamdaPayload/ZippedUpload';
-import UpdatePackageRequest from '../types/Request/UpdatePackageRequest';
-import UploadPackageRequest from '../types/Request/UploadPackageRequest';
-import zipFileHandler from "../src/ZipFileHandler"
 import { LambdaDefaultConfig } from '../aws/config';
-import CheckPackageRatingRequest from '../types/Request/CheckPackageRatingRequest';
-import * as scoreMethod from "../../MVP2/src/Scoring/scoring"
-import { requestFromGQL } from "../../MVP2/src/Requests/GitHub/gql"
-import * as processMethod from "../../MVP2/src/Processors/gqlProcessor"
-import * as processURLMethod from "../../MVP2/src/Processors/urlProcessor"
-import * as sanitize from "../../MVP2/src/Input/Sanitize"
-import { createLicenseField, createReadmeField, createTestMainQuery, createTestMasterQuery } from '../../MVP2/src/Requests/QueryBuilders/fields';
-import { repoQueryBuilder } from '../../MVP2/src/Requests/QueryBuilders/repos';
-import { BaseRepoQueryResponse, ReposFromQuery } from '../../MVP2/src/Types/ResponseTypes';
-import * as dotenv from "dotenv";
 
-dotenv.config();
-const router = Router();
-
-router.post(
-    '/:packageName/:version', 
-    zipFileHandler.single('package'),
-    async (req: CheckPackageRatingRequest, res: Response) => 
-{
-    try {
-
-        console.log("req: \n", req.params, " \nbody:\n", req.body);
-        if (!req.params.packageName) {
-            res.status(400).send('No file uploaded.');
-        }
-
-        /**
-         * - Remove zip file from req body
-         * 
-         * Optimize by caching version if already computed.
-         */
-
-        const npmURL = `https://www.npmjs.com/package/${req.params.packageName}`
-        const cleanSet = sanitize.SanitizeUrlSet([ npmURL ])
-        const repo = await processURLMethod.buildReposFromUrls(cleanSet)
-
-        const query = repoQueryBuilder(repo, [
-            createLicenseField(),
-            createReadmeField(),
-            createTestMainQuery(),
-            createTestMasterQuery(),
-            'stargazerCount',
-        ]);
-        const result = await requestFromGQL<ReposFromQuery<BaseRepoQueryResponse>>(query);
-
-        // Problem method that takes too long
-        const cleanedRepos = processMethod.mapGQLResultToRepos(result, repo);
-        const npmPkgScore = await scoreMethod.scoreRepositoriesArray(repo);
-        
-        res.status(200).send(npmPkgScore);
-    } catch (error) {
-        console.error(error);
-        res.status(500).send('Error uploading or processing file');
+const formatResponse = (body: any) => {
+    if (!body) {
+        // If body is null or undefined, return a default object with -1 values
+        return {
+            RampUp: -1,
+            Correctness: -1,
+            BusFactor: -1,
+            ResponsiveMaintainer: -1,
+            LicenseScore: -1,
+            GoodPinningPractice: -1,
+            PullRequest: -1,
+            NetScore: -1,
+            RampUpLatency: -1,
+            CorrectnessLatency: -1,
+            BusFactorLatency: -1,
+            ResponsiveMaintainerLatency: -1,
+            LicenseScoreLatency: -1,
+            GoodPinningPracticeLatency: -1,
+            PullRequestLatency: -1,
+            NetScoreLatency: -1
+        };
     }
-});
+
+    return {
+        RampUp: body.ramp_up ?? -1,
+        Correctness: body.correctness ?? -1,
+        BusFactor: body.bus_factor ?? -1,
+        ResponsiveMaintainer: body.responsive_maintainer ?? -1,
+        LicenseScore: body.license ?? -1,
+        GoodPinningPractice: body.create_package_json_field ?? -1,
+        PullRequest: body.create_pull_requests_field ?? -1,
+        NetScore: body.net_score ?? -1,
+        RampUpLatency: body.ramp_up_latency ?? -1,
+        CorrectnessLatency: body.correctness_latency ?? -1,
+        BusFactorLatency: body.bus_factor_latency ?? -1,
+        ResponsiveMaintainerLatency: body.responsive_maintainer_latency ?? -1,
+        LicenseScoreLatency: body.license_latency ?? -1,
+        GoodPinningPracticeLatency: body.create_package_json_field_latency ?? -1,
+        PullRequestLatency: body.create_pull_requests_field_latency ?? -1,
+        NetScoreLatency: body.net_score_latency ?? -1
+    };
+};
+
+const makeCall = async (req: any) => {
+    const payload = {
+        packageName: req.id,
+    };
+    console.log(payload);
+
+    const client = new LambdaClient(LambdaDefaultConfig);
+    const params: LamdaRequest = {
+        FunctionName: config.RatePackage,
+        InvocationType: "RequestResponse",
+        Payload: JSON.stringify(payload),
+    };
+    let response: any = {};
+    try {
+        const command = new InvokeCommand(params);
+        let result = await client.send(command);
+        return JSON.parse(
+            Buffer.from(result.Payload?.buffer as Buffer).toString("utf8")
+        );
+    } catch (error) {
+        response = {
+            status: 500,
+            result: error
+        };
+        console.error("Error invoking Lambda:", error);
+    }
+    return response;
+};
+
+const router = Router();
+router.get(
+    '/:id/rate',
+    async (req: Request, res: Response) => {
+        try {
+            let output = await makeCall(req.params);
+            const formattedResponse = formatResponse(output.body);
+            console.log(formattedResponse);
+            res.status(200).send(
+                {
+                status: 200,
+                result: output.body,
+                }
+            );
+        } catch (err: any) {
+            res.status(400).send(err.message);
+        }
+    }
+);
 
 export default router;
