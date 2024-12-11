@@ -44,22 +44,6 @@ app.use(express.json());
 app.use(cors<Request>());
 
 // Route mapping
-<<<<<<< HEAD
-=======
-// app.use("/package", ZippedUpload);
-// app.use("/packages", UpdatePackage);
-// app.use("/packages/rating", CheckPackageRating);
-// app.use("/packages/download", DownloadPackage);
-// app.use("/packages/versions", FetchAvailableVersions);
-// app.use("/ingest", IngestPackage);
-// app.use("/packages/directory", FetchPackageDirectory);
-// app.use("/packages/search", SearchPackages);
-// app.use("/packages/size-cost", CheckSizeCost);
-// app.use("/reset", Reset);
-
-app.use("/packages", FetchAvailableVersions);
-app.use("/packages", SearchPackages);
->>>>>>> e006372482a7d158c547e09be20e776b57a6b639
 app.use("/package", ZippedUpload);
 app.use("/packages", UpdatePackage);
 app.use("/packages", CheckPackageRating);
@@ -67,12 +51,8 @@ app.use("/packages/download", DownloadPackage);
 app.use("/packages/versions", FetchAvailableVersions);
 app.use("/ingest", IngestPackage);
 app.use("/packages/directory", FetchPackageDirectory);
-<<<<<<< HEAD
 app.use("/packages/search", SearchPackages);
 app.use("/packages/size-cost", CheckSizeCost);
-=======
-app.use("/packages", CheckSizeCost);
->>>>>>> e006372482a7d158c547e09be20e776b57a6b639
 app.use("/reset", Reset);
 
 // app.use("/packages", FetchAvailableVersions);
@@ -83,13 +63,7 @@ app.use("/reset", Reset);
 // app.use("/packages/download", DownloadPackage);
 // app.use("/ingest", IngestPackage);
 // app.use("/packages/directory", FetchPackageDirectory);
-// app.use("/packages/size-cost", CheckSizeCost);
 // app.use("/reset", Reset);
-
-// Basic route
-app.get('/', (req: Request, res: Response) => {
-    res.send('Hello, TypeScript with Express!');
-});
 
 app.listen(PORT, '0.0.0.0', () => {
     console.log(`Server is running at http://localhost:${PORT}`);
