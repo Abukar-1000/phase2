@@ -8,34 +8,41 @@ import { Container } from '@mui/material';
 import { BrowserRouter, Routes, Route } from "react-router";
 import routes from './routes';
 import config from './Styles/config';
+import {
+  QueryClient,
+  QueryClientProvider
+} from '@tanstack/react-query'
 
+const queryClient = new QueryClient()
 function App() {
   return (
     <div className="App">
-      <ThemeProvider theme={theme}>
-        <BrowserRouter>
-            <Navbar />
-              <Container 
-                maxWidth="xl"
-                sx={{ 
-                  minHeight: "95dvh",
-                  display: "flex",
-                  justifyContent: "center",
-                  alignContent: "center",
-                  flexDirection: "column"
-                }}  
-              >
+      <QueryClientProvider client={queryClient}>
+        <ThemeProvider theme={theme}>
+          <BrowserRouter>
+              <Navbar />
+                <Container 
+                  maxWidth="xl"
+                  sx={{ 
+                    minHeight: "95dvh",
+                    display: "flex",
+                    justifyContent: "center",
+                    alignContent: "center",
+                    flexDirection: "column"
+                  }}  
+                >
 
-                  <Routes>
-                    {
-                      routes.map(route => <Route path={route.path} element={route.component}/>)
-                    }
-                  </Routes>
+                    <Routes>
+                      {
+                        routes.map(route => <Route path={route.path} element={route.component}/>)
+                      }
+                    </Routes>
 
-              </Container>
-            <Footer />
-        </BrowserRouter>
-      </ThemeProvider>
+                </Container>
+              <Footer />
+          </BrowserRouter>
+        </ThemeProvider>
+      </QueryClientProvider>
     </div>
   );
 }

@@ -3,7 +3,10 @@ import Package from "../Assets/Package"
 import IPackage from "../Types/Package"
 import { useState } from "react";
 import { example } from "../Pages/testAPIResponse"
-
+import {
+    useQuery
+  } from '@tanstack/react-query'
+import axios from "axios";
 // type Packages = IPackage[] | undefined;
 
 
@@ -15,6 +18,28 @@ function All() {
     const pageSize = 3;
     const start = page * pageSize;
     const stop = Math.min((start + pageSize), example.length);
+
+    const { isPending, isError, data, error } = useQuery({
+        queryKey: ['todos', page],
+        queryFn: async () => {
+            const res =  await axios.get(`http://localhost:443/packages/directory/${page}`,
+                {
+                    params: {
+                        page: page
+                    }
+                }
+            )
+            return res?.data?.result?.body;
+        },
+    })
+
+    console.log("data is ", data);
+    let uiData = [];
+
+    if (data !== undefined && data?.length > 0) {
+        uiData = data?.slice(start, stop).map((pkg: any) => <Package Package={pkg} />);
+    }
+
     return (
         <Box
             sx={{
@@ -33,7 +58,7 @@ function All() {
                 flexDirection={"column"}
             >
                 {
-                    example?.slice(start, stop).map((pkg) => <Package Package={pkg} />)
+                    uiData
                 }
                 <Grid2 container>
                     <Grid2 size={6}>

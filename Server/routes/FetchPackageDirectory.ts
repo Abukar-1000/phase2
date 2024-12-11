@@ -20,16 +20,47 @@ router.get(
          * size only on the server
          */
 
-        const pageSize = 30;
+        const pageSize = 3;
         const startIndex = (pageSize * req.params.page);
         const stopIndex = startIndex + pageSize;
-        
+
         const endPointResponse = {
-            params: req.params,
+            params: {
+                ...req.params,
+                startIndex,
+                stopIndex
+            },
             body: req.body
         };
 
-        res.status(200).send(endPointResponse);
+        // res.status(200).send(endPointResponse);
+        const client = new LambdaClient(LambdaDefaultConfig);
+        const params: LamdaRequest = {
+            FunctionName: config.FetchPackageDirectory,
+            InvocationType: "RequestResponse",
+            Payload: JSON.stringify(endPointResponse.params),
+        };
+
+        let response: any = {};
+        try {
+            const command = new InvokeCommand(params);
+            let result: any = await client.send(command);
+            response = {
+                status: 200,
+                result: JSON.parse(
+                    Buffer.from(result.Payload?.buffer as Buffer
+                    ).toString("utf8"))
+            }
+
+        } catch (error) {
+            response = {
+                status: 500,
+                result: error
+            }
+            console.error("Error invoking Lambda:", error);
+        }
+
+        res.status(200).send(response);
     }
 )
 

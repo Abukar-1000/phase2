@@ -13,6 +13,41 @@ import * as processMethod from "../../MVP2/src/Processors/urlProcessor"
 import * as sanitize from "../../MVP2/src/Input/Sanitize"
 import DownloadPackageRequest from '../types/Request/DownloadPackageRequest';
 
+
+const makeCall = async (req: any) => {
+    const payload = {
+        packageName: req.Name.toLowerCase(),
+        version: req.Version
+    };
+    const client = new LambdaClient(LambdaDefaultConfig);
+    const params: LamdaRequest = {
+        FunctionName: config.DownloadPackageLambda,
+        InvocationType: "RequestResponse",
+        Payload: JSON.stringify(payload),
+    };
+
+    let response: any = {};
+    try {
+        const command = new InvokeCommand(params);
+        let result = await client.send(command);
+        response = {
+            status: 200,
+            result: JSON.parse( Buffer.from(result.Payload?.buffer as Buffer ).toString("utf8"))
+        }
+    } catch (error) {
+        response = {
+            status: 500,
+            result: error
+        }
+        console.error("Error invoking Lambda:", error);
+    }
+    finally {
+        const { status } = response;
+        return response;
+    }
+}
+
+
 const router = Router();
 
 /**
@@ -21,38 +56,8 @@ const router = Router();
 router.get(
     '/:packageName/:version',
     async (req: DownloadPackageRequest, res: Response) => {
-        
-        const payload = {
-            packageName: req.params?.packageName,
-            version: req.params?.version
-        };
 
-        const client = new LambdaClient(LambdaDefaultConfig);
-        const params: LamdaRequest = {
-            FunctionName: config.DownloadPackageLambda,
-            InvocationType: "RequestResponse",
-            Payload: JSON.stringify(payload),
-        };
-    
-        let response: any = {};
-        try {
-            const command = new InvokeCommand(params);
-            let result = await client.send(command);
-            response = {
-                status: 200,
-                result: JSON.parse( Buffer.from(result.Payload?.buffer as Buffer ).toString("utf8"))
-            }
-        } catch (error) {
-            response = {
-                status: 500,
-                result: error
-            }
-            console.error("Error invoking Lambda:", error);
-        }
-        finally {
-            const { status } = response;
-            res.status(status).send(response);
-        }
+
 
     }
 );
