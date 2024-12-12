@@ -1,12 +1,12 @@
 
 
 const baseApiRout = (
-    process.env.CONTEXT === "dev" ||
-    process.env.CONTEXT === undefined
+    process.env.REACT_APP_Context === "dev" ||
+    process.env.REACT_APP_Context === undefined
 ) ? 
     "http://localhost:443/" 
 : 
-    "[prod]";
+    "http://ec2-184-73-59-90.compute-1.amazonaws.com:443/";
 
 
 const config = {

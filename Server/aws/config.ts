@@ -29,6 +29,16 @@ const config: AWSConfig = {
     RatePackage:"ratePackage",
 }
 
+const mode = process.env.Context === undefined? "dev": "prod";
+const credentials = (mode === "dev")?
+secrets:
+{
+    accessKeyId: process.env.Key,
+    secretAccessKey: process.env.key
+}
+
+console.log(`Running in ${mode}`);
+
 export const LambdaDefaultConfig = {
     region: config.LambdaFunctionDefaultRegion,
     credentials: secrets

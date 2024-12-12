@@ -14,9 +14,9 @@ interface IPackageProps {
 function Package({ Package }: IPackageProps) {
     const pkg = Package as IPackage;
     const cur = pkg.current_version as unknown as IVersion[];
-    const version = cur[0].name;
+    const version = cur[0].name  || "";
     const [elevation, setElevation] = useState<number>(4)
-    const name = pkg.package_name.charAt(0).toUpperCase() + pkg.package_name.slice(1); 
+    const name = pkg.package_name.charAt(0).toUpperCase() + pkg.package_name.slice(1) || ""; 
     return (
       <Paper
         elevation={elevation}

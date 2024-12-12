@@ -14,6 +14,10 @@ type Router = IRoute[];
 
 const routes: Router = [
     {
+        path: "/",
+        component: <All />
+    },
+    {
         path: "/all",
         component: <All />
     },

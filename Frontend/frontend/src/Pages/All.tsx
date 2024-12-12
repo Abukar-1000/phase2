@@ -1,4 +1,4 @@
-import { Box, Button, Grid2, Pagination, Stack } from "@mui/material";
+import { Box, Button, Grid2, Pagination, Paper, Stack, Typography } from "@mui/material";
 import Package from "../Assets/Package"
 import IPackage from "../Types/Package"
 import { useState } from "react";
@@ -8,16 +8,12 @@ import {
   } from '@tanstack/react-query'
 import axios from "axios";
 import config from "../Config/config";
-
+import ReplyAllIcon from '@mui/icons-material/ReplyAll';
 function All() {
 
     // Get page count
-    const pageCount = 2;
     const [page, setPage] = useState<number>(0);
-    const pageSize = 3;
-    const start = page * pageSize;
-    const stop = Math.min((start + pageSize), example.length);
-
+    
     const { isPending, isError, data, error } = useQuery({
         queryKey: ['todos', page],
         queryFn: async () => {
@@ -31,13 +27,56 @@ function All() {
             return res?.data?.result?.body;
         },
     })
-
-    console.log("Context: ",process.env.CONTEXT)
+    
+    const pageCount = 2;
+    const pageSize = 3;
+    const start = 0;
+    const stop = Math.min((start + pageSize), data?.length);
+    console.log("Context: ",process.env.REACT_APP_Context)
     console.log("data is ", data);
     let uiData = [];
 
     if (data !== undefined && data?.length > 0) {
-        uiData = data?.slice(start, stop).map((pkg: any) => <Package Package={pkg} />);
+        try {
+            uiData = data?.slice(start, stop).map((pkg: any, index: number) => <Package key={pkg} Package={pkg} />);
+        }
+        // end of page 
+        catch (err) {
+            uiData = [
+                <Box
+                    display={"flex"}
+                    justifyContent={"center"}
+                    alignContent={"center"}
+                    height={"60dvh"}
+                >
+                    <Paper
+                        sx={{
+                            height: "25dvh",
+                            width: "40dvw"
+                        }}
+                    >
+                        <Box
+                            display={"flex"}
+                            justifyContent={"center"}
+                            alignContent={"center"}
+                            flexDirection={"column"}
+                            height={"100%"}
+                        >
+                            <Box
+                                display={"flex"}
+                                justifyContent={"center"}
+                                alignContent={"center"}
+                                flexDirection={"row"}
+                                gap={5}
+                            >
+                                <ReplyAllIcon fontSize="large"/>
+                                <Typography variant="h5" >No more packages</Typography>
+                            </Box>
+                        </Box>
+                    </Paper>
+                </Box>
+            ]
+        }
     }
 
     return (
