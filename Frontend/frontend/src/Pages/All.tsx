@@ -7,8 +7,7 @@ import {
     useQuery
   } from '@tanstack/react-query'
 import axios from "axios";
-// type Packages = IPackage[] | undefined;
-
+import config from "../Config/config";
 
 function All() {
 
@@ -22,7 +21,7 @@ function All() {
     const { isPending, isError, data, error } = useQuery({
         queryKey: ['todos', page],
         queryFn: async () => {
-            const res =  await axios.get(`http://localhost:443/packages/directory/${page}`,
+            const res =  await axios.get(config.route + `packages/directory/${page}`,
                 {
                     params: {
                         page: page
@@ -33,6 +32,7 @@ function All() {
         },
     })
 
+    console.log("Context: ",process.env.CONTEXT)
     console.log("data is ", data);
     let uiData = [];
 
