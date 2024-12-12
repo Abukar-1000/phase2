@@ -11,7 +11,6 @@
  *  handle a task. We only change its definition here.
  */
 
-import secrets from "./secrets";
 
 // @ts-ignore
 const config: AWSConfig = {
@@ -30,18 +29,17 @@ const config: AWSConfig = {
 }
 
 const mode = process.env.Context === undefined? "dev": "prod";
-const credentials = (mode === "dev")?
-secrets:
+const credentials = 
 {
-    accessKeyId: process.env.Key,
-    secretAccessKey: process.env.key
+    accessKeyId: process.env.Id,
+    secretAccessKey: process.env.Key
 }
 
 console.log(`Running in ${mode}`);
 
 export const LambdaDefaultConfig = {
     region: config.LambdaFunctionDefaultRegion,
-    credentials: secrets
+    credentials: credentials
 }
 
 interface AWSConfig {
