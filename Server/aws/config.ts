@@ -31,8 +31,8 @@ const config: AWSConfig = {
 const mode = process.env.Context === undefined? "dev": "prod";
 const credentials = 
 {
-    accessKeyId: process.env.Id,
-    secretAccessKey: process.env.Key
+    accessKeyId: process.env.Id as string,
+    secretAccessKey: process.env.Key as string
 }
 
 console.log(`Running in ${mode}`);
