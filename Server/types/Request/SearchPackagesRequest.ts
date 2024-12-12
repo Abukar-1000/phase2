@@ -4,7 +4,6 @@ import * as core from "express-serve-static-core";
 export default interface SearchPackagesRequest<
     P = {
         nameRegex: string | undefined,
-        readmeRegex: string | undefined
     }, 
     ResBody = any,
     ReqBody = any,

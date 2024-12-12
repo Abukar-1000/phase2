@@ -14,13 +14,15 @@ router.get(
             params: req.params,
             body: req.body
         };
-
+        
+        console.log("got", req.params, req.body);
         const client = new LambdaClient(LambdaDefaultConfig);
         const params: LamdaRequest = {
             FunctionName: config.SearchPackageRequest,
             InvocationType: "RequestResponse",
-            Payload: JSON.stringify(req.body),
+            Payload: JSON.stringify(req.params),
         };
+
         let response: any = {};
         try {
             const command = new InvokeCommand(params);

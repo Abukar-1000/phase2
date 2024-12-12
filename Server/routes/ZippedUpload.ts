@@ -14,9 +14,9 @@ router.post(
     zipFileHandler.single('package'),
     async (req: UploadPackageRequest, res: Response) => {
         console.log(req.params, req.body);
-        if (!req.file?.buffer) {
-            res.status(500).send("Did not provide file!");
-        }
+        // if (!req.file?.buffer) {
+        //     res.status(500).send("Did not provide file!");
+        // }
         
         const base64ZippedFile: Base64Payload = req.file?.buffer.toString("base64");
         const payload: ZippedUpload = {
@@ -47,7 +47,6 @@ router.post(
                 status: 500,
                 result: error
             }
-            console.error("Error invoking Lambda:", error);
         }
         finally {
             const { status } = response;

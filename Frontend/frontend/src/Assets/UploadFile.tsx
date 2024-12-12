@@ -1,5 +1,8 @@
 import { Box, Button, Checkbox, FormControlLabel, Paper, Stack, Typography } from "@mui/material";
+import axios from "axios";
 import { useState } from "react";
+import config from "../Config/config";
+import { useMutation, useQuery } from "@tanstack/react-query";
 import CloudUploadIcon from '@mui/icons-material/CloudUpload';
 
 interface IUploadFileProps {
@@ -11,7 +14,33 @@ function UploadFile({ Prompt }: IUploadFileProps) {
     const [elevation, setElevation] = useState<number>(4)
     const [debloat, setDebloat] = useState<boolean>(false)
     const [selectedFile, setSelectedFile] = useState<any>(null);
+    
+    const { isPending, isError, data, error } = useQuery({
+        queryKey: [debloat, selectedFile],
+        queryFn: async () => {
+            if (selectedFile === null) {
+                return;
+            }
 
+            const formData = new FormData();
+            formData.append('package', selectedFile);
+            
+            const res =  await axios.post( config.route + `package/${debloat}/pacakge/version`,
+                formData,
+                {
+                    headers: {
+                        'Content-Type': 'multipart/form-data'
+                    },
+                    params: {
+                        debloat: debloat,
+                        packageName: "",
+                        version: ""
+                    }
+                }
+            )
+        },
+        staleTime: Infinity
+    })
     console.log(selectedFile);
     return (
         <Box

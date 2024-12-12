@@ -3,7 +3,10 @@
 const baseApiRout = (
     process.env.CONTEXT === "dev" ||
     process.env.CONTEXT === undefined
-) ? "http://localhost:443/" : "[prod]";
+) ? 
+    "http://localhost:443/" 
+: 
+    "[prod]";
 
 
 const config = {

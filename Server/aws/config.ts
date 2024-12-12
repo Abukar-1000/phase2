@@ -13,7 +13,6 @@
 
 import secrets from "./secrets";
 
-
 // @ts-ignore
 const config: AWSConfig = {
     UploadZippedLambda: "zippedUploads",
