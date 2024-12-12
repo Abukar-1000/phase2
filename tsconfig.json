@@ -102,16 +102,14 @@
     // "allowUnreachableCode": true,                     /* Disable error reporting for unreachable code. */
 
     /* Completeness */
-    // "skipDefaultLibCheck": true,                      /* Skip type checking .d.ts files that are included with TypeScript. */
+    "skipDefaultLibCheck": true,                      /* Skip type checking .d.ts files that are included with TypeScript. */
     "skipLibCheck": true,
-    "typeRoots": ["./src/types/", "Server/node_modules/@types"]
+    "typeRoots": ["Server/node_modules/@types"],
   },
-  "include": [
-    "Server/index.ts", 
-    "Server/routes/*.ts", 
-    "Server/types/**/*.ts", 
-    "Server/src/*.ts", 
-    "Server/aws/config.ts"
+  "exclude": [
+    "**/Server/aws/secrets.ts", 
+    "**/Server/lambdaFunctions", 
+    "**/MVP2/**", 
+    "**/Frontend/"
   ],
-  "exclude": ["aws/secrets.ts", "../MVP2/*"]
 }
